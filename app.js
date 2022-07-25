@@ -2,57 +2,18 @@ const express = require('express');
 
 const app = express();
 
-let produtos = require('./produtos');
-
+const rotaProdutos = require('./routes/routeProdutos')
+const rotaUsuarios = require('./routes/routeUsuarios')
 app.use(express.json());
 
-//POST para adicionar 4 produtos, de uma vez.
-app.post('/produtos', (req, res) => {
-    const content = req.body;
-    const newProducts = [...produtos, ...content];
-    produtos = newProducts;
-    res.status(201).json(produtos);
-})
+app.use('/produtos', rotaProdutos);
 
-//PUT para modificar um desses produtos.
-app.put('/produtos/:id', (req, res) =>{
-    const id = Number(req.params.id);
-    const content = req.body;
+app.use('/users', rotaUsuarios);
 
-    const produto = produtos.find((produto) => produto.id === id);
-
-    if(!produto){
-        return res.status(400).json({"message": "Produto não encontrado"})
-    } 
-
-    const newProducts = produtos.map((produto) => {
-        if (produto.id === id){
-            return content;
-        }
-        return produto;
-    })
-
-    produtos = newProducts;
-
-    res.status(200).json(produtos);
-})
-
-//DELETE para deletar um desses produtos.
-app.delete('/produtos/:id', (req, res) => {
-    const id = Number(req.params.id);
-    let product = produtos.find((produto) => produto.id === id);
-
-    if(!product){
-        return res.status(400).json({"message": "Produto não encontrado"})
-    } 
-
-    produtos = produtos.filter((produto) => produto.id !== id)
-    res.status(200).json(produtos);
-})
- 
-//GET para verificar os que foram mantidos.
-app.get('/produtos', (req, res) =>{
-    res.status(200).json(produtos);
+app.use((req, res, next) =>{
+    res.status(404).send('Erro 404, not found');
+    
+    next();
 });
 
 app.listen(3001, ()=>{
