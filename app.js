@@ -9,10 +9,9 @@ app.use(express.json());
 //POST para adicionar 4 produtos, de uma vez.
 app.post('/produtos', (req, res) => {
     const content = req.body;
-
     const newProducts = [...produtos, ...content];
-
-    res.status(201).json(newProducts);
+    produtos = newProducts;
+    res.status(201).json(produtos);
 })
 
 //PUT para modificar um desses produtos.
@@ -26,14 +25,14 @@ app.put('/produtos/:id', (req, res) =>{
         return res.status(400).json({"message": "Produto não encontrado"})
     } 
 
-    const newProdutos = produtos.map((produto) => {
+    const newProducts = produtos.map((produto) => {
         if (produto.id === id){
             return content;
         }
         return produto;
     })
 
-    produtos = newProdutos;
+    produtos = newProducts;
 
     res.status(200).json(produtos);
 })
